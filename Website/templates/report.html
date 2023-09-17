@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotonAI</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/identification.css')}}">
+</head>
+<body>
+    <header class="report_header">
+        <div id="report_ip2">
+            <h2 class="ds">Report</h2>
+        </div>
+        <div class="report_user_profile">
+            <h4>Data Pioneer</h4>
+            <img class="user_icon"
+                src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt=""
+                srcset="">
+        </div>
+    </header>
+    <div class="report_view">{{ supplier_report | safe }}</div>
+</body>
+</html>

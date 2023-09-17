@@ -1,0 +1,8 @@
+0 Tulsi-leaf
+1 Aloevera-leaf
+2 Doddpathre-leaf
+3 Neem-leaf
+4 Curry-leaf
+5 Henna-leaf
+6 Hibiscus-leaf
+7 Default

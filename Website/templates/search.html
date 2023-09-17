@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/identification.css')}}">
+</head>
+<body>
+    <script src="https://kit.fontawesome.com/c1b3701aff.js" crossorigin="anonymous"></script>
+    <div class="side-nav">
+        <div class="side-nav-wrap">
+            <div class="logo">
+                <img src="{{url_for('static',filename='logo.png')}}" width="200px" height="200px" alt="" srcset="">
+            </div>
+            <ul>
+                <li>
+                    <a href="{{url_for('identify')}}" ><i class="fa-regular fa-id-card nav-icon"></i>Identification</a>
+                </li>
+                <li>
+                    <a href="{{url_for('home')}}"><i class="fa-solid fa-file-invoice nav-icon"></i>Report</a>
+                </li>
+                <li>
+                    <a href="{{url_for('search')}}" class="active"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
+                </li>
+                <li>
+                    <a href="{{url_for('history')}}"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
+                </li>
+                <li>
+                    <a href="{{url_for('login')}}" class="logout"><i class="fa-solid fa-right-from-bracket nav-icon"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <header>
+            <input type="text" name="search-bar" id="ip2" placeholder="Enter The Plant Name " required>
+            <div class="user_profile">
+                <h4>Data Pioneer</h4>
+                <img class="user_icon" src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt="" srcset="">
+            </div>
+        </header>
+        <h2>Plants</h2>
+        
+        <div class="plants">
+            <div class="plant-container">
+                <div class="image">
+                    <img src="{{url_for('static',filename='tp1.jpg')}}" height="200px" width="250px">
+                </div>
+                <div class="text"> 
+                    <p><b>Name:</b><span> Tulsi</span></p>
+                    <p><b>Description:</b><span> Tulsi is an aromatic shrub in the basil family that is thought to have originated in north central India and now grows native throughout the eastern world tropics. It is an erect, much branched sub-shrib 30-60cm tall, with simple opposite green or purple leaves. Within Ayurveda, tulsi is known as "Mother Medicine of Nature" and "The Queen of Herbs".
+                    </span></p>
+                </div>
+               
+            </div>
+            <div class="plant-container">
+                <div class="image">
+                    <img src="{{url_for('static',filename='neem.jpg')}}" height="200px" width="250px">
+                </div>
+                <div class="text"> 
+                    <p><b>Name:</b><span> Neem</span></p>
+                    <p><b>Description:</b><span> Neem trees are attractive broad-leaved evrgreens that can grow up to 30m tall and 2.5m in girth.Their spreading branches form rounded crowns as much as 20m across.Neem leaves are medium to large in size and elongated to oblong in shape, averaging 20-40cm in length.The vibrant green leaves are smooth and glossy with sharp,serrated edges.
+                    </span></p>
+                </div>
+               
+            </div>
+            <div class="plant-container">
+                <div class="image">
+                    <img src="{{url_for('static',filename='hibiscus.jpg')}}" height="200px" width="250px">
+                </div>
+                <div class="text"> 
+                    <p><b>Name:</b><span> Hibiscus</span></p>
+                    <p><b>Description:</b><span> Hibiscus leaves are ovate, simple and 8 to 10.5 cm long. Its green and glossy leaves are alternatively organized and several cultivars show toothed margins.
+                    </span></p>
+                </div>
+               
+            </div>
+    </div>
+    
+</body>
+</html>

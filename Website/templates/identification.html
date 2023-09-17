@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/identification.css')}}">
+</head>
+
+<body>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://kit.fontawesome.com/c1b3701aff.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <div class="side-nav">
+        <div class="side-nav-wrap">
+            <div class="logo">
+                <img src="{{url_for('static',filename='logo.png')}}" width="200px" height="200px" alt="" srcset="">
+            </div>
+            <ul>
+                <li>
+                    <a href="{{url_for('identify')}}" class="active"><i
+                            class="fa-regular fa-id-card nav-icon"></i>Identification</a>
+                </li>
+                <li>
+                    <a href="{{url_for('home')}}"><i class="fa-solid fa-file-invoice nav-icon"></i>Report</a>
+                </li>
+                <li>
+                    <a href="{{url_for('search')}}"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
+                </li>
+                <li>
+                    <a href="{{url_for('history')}}"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
+                </li>
+                <li>
+                    <a href="{{url_for('login')}}" class="logout"><i
+                            class="fa-solid fa-right-from-bracket nav-icon"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <!-- Header Part -->
+        <header class="identify_header">
+            <div id="ip2">
+                <h2 class="ds">Identification</h2>
+            </div>
+            <div class="user_profile">
+                <h4>Data Pioneer</h4>
+                <img class="user_icon"
+                    src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt=""
+                    srcset="">
+            </div>
+        </header>
+
+        <!-- Raw material Name Enter -->
+        <h3>Enter the Name of the Raw Material:</h3>
+        <input type="text" name="search-bar" id="identify" placeholder="Enter The Plant Name" required>
+        <div class="buttons">
+            <div class="file-upload">
+                <button type="submit" id="capture">Capture</button>
+                <button type="submit" id="submit">Submit</button>
+                <button type="submit" id="clear">Clear</button>
+            </div>
+        </div>
+
+        <!-- Verified Lottie-player -->
+        <div id="verified"></div>
+
+        <!-- show input image -->
+        <label for="images" class="drop-container" id="dropcontainer">
+            <span class="drop-title">Drop files here</span>
+            or
+            <input type="file" id="images" multiple accept="image/*" required>
+        </label>
+        <img id="image-preview" class="drop-container" src="#" style="display: none;">
+
+        <!-- Output message -->
+        <div id="predict_output"></div>
+
+        <!--Vertical Bar-->
+        <div class="outer">
+            <div class="inner"></div>
+        </div>
+
+        <!--Loader-->
+        <div id="loading"><lottie-player src="https://lottie.host/aec192c9-7f46-44da-9d43-e7015ab6822c/hKq5wjyPJV.json"
+                background="transparent" speed="1" style="width: 500px; height: 500px;" loop
+                autoplay></lottie-player></div>
+
+        <!--Prediction Output-->
+        <div class="output" style="display: none;">
+            <div class="details">
+                <h3>Name :</h3>
+                <p class="pg" id="name"></p>
+                <h3>Species :</h3>
+                <p class="pg" id="species"></p>
+                <div class="im">
+                    <img id="predict_img" src="" alt="" width="200px" height="200px" style="border-radius: 25px;">
+                </div>
+                <h3>Decsription :</h3>
+                <p class="pg" id="description"></p>
+                <h3>Habitat :</h3>
+                <p class="pg" id="habitat"></p>
+            </div>
+        </div>
+        <script>
+            const imageInput = document.getElementById("images");
+            const imagePreview = document.getElementById("image-preview");
+            const dropcontainerElement = document.getElementById("dropcontainer");
+            const clr = document.getElementById("clear");
+
+            clr.addEventListener("click",function(){
+                imageInput.value = "";
+                document.querySelector(".output").style.display = "none";
+                dropcontainerElement.style.display="flex";
+                document.getElementById("identify").value= "";
+                document.getElementById("verified").innerHTML = "";
+                document.getElementById("predict_output").innerHTML="";
+                document.getElementById("predict_img").src = "";
+                imagePreview.style.display = "none";
+            });
+            // Add an event listener to the input element to detect changes in the selected file
+            $('#images').on('change', function () {
+                var imageInput = this;
+                var imagePreview = $('#image-preview');
+
+                if (imageInput.files && imageInput.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        imagePreview.attr('src', e.target.result);
+                        imagePreview.css('display', 'block');
+                        $('#dropcontainer').css('display', 'none');
+                    };
+
+                    reader.readAsDataURL(imageInput.files[0]);
+                } else {
+                    imagePreview.css('display', 'none');
+                    $('#dropcontainer').css('display', 'block');
+                }
+            });
+            $(document).ready(function () {
+                $("#submit").click(function () {
+                    var formData = new FormData();
+                    var raw = document.getElementById("identify");
+                    var raw_material_name = raw.value;
+                    var verify = document.getElementById("verified")
+                    const res = document.getElementById("predict_output");
+                    formData.append("image", $("#images")[0].files[0]);
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/predict",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            $('#loading').css("visibility", "visible");
+                        },
+                        success: function (response) {
+                            document.querySelector(".output").style.display = "block";
+                            const temp = response.split("$");
+                            const t1 = temp[0].split(":");
+                            const t2 = temp[1].split(":");
+                            const t3 = temp[2].split(":");
+                            const t4 = temp[3].split(":");
+                            const name = t1[1];
+                            const spe = t2[1];
+                            const desc = t3[1];
+                            const hab = t4[1];
+                            if (name.trim() === raw_material_name) {
+                                $("#name").text(name);
+                                $("#species").text(spe);
+                                $("#description").text(desc);
+                                $("#habitat").text(hab);
+                                document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
+                                res.innerHTML = "Identified as " + raw_material_name;
+                                verify.innerHTML = '<lottie-player class="verify_icon" src="https://lottie.host/712cc0d7-0319-445b-80b7-ed662a3d4db3/9idUOQtExU.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>';
+                            }
+                            else {
+                                verify.innerHTML = '<lottie-player class="verify_icon" src="https://lottie.host/fdfcdf78-8b44-4d5c-a6ed-0daaedc20483/3HUQ76oYY8.json" background="transparent" speed="1" style="width: 250px; height: 250px; margin-top: 20px; margin-left: 15px;" loop autoplay></lottie-player>';
+                                res.innerHTML = "Fake Raw Material or Wrong Raw Material";
+                                document.querySelector(".output").style.display = "none";
+                            }
+                        },
+                        complete: function () {
+                            $('#loading').css("visibility","hidden")
+                        },
+                        error: function () {
+                            $("#prediction-result").text("Error: Unable to make a prediction.");
+                        }
+                    });
+                });
+
+                $("#capture").click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/capture",
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            const temp = response.split("$");
+                            const t1 = temp[0].split(":");
+                            const t2 = temp[1].split(":");
+                            const t3 = temp[2].split(":");
+                            const t4 = temp[3].split(":");
+                            const name = t1[1];
+                            const spe = t2[1];
+                            const desc = t3[1];
+                            const hab = t4[1];
+                            $("#name").text(name);
+                            $("#species").text(spe);
+                            $("#description").text(desc);
+                            $("#habitat").text(hab);
+                            document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
+                        },
+                        error: function () {
+                            $("#prediction-result").text("Error: Unable to make a prediction.");
+                        }
+                    });
+
+                })
+            });
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/identification.css')}}">
+</head>
+
+<body>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://kit.fontawesome.com/c1b3701aff.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <div class="side-nav">
+        <div class="side-nav-wrap">
+            <div class="logo">
+                <img class="logo_img" src="{{url_for('static',filename='logo.png')}}" width="200px" height="200px" alt="" srcset="">
+            </div>
+            <ul>
+                <li>
+                    <a href="{{url_for('identify')}}" class="active"><i
+                            class="fa-regular fa-id-card nav-icon"></i>Identification</a>
+                </li>
+                <li>
+                    <a href="{{url_for('search')}}"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
+                </li>
+                <li>
+                    <a href="{{url_for('history')}}"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
+                </li>
+                <li>
+                    <a href="{{url_for('login')}}" class="manu-logout"><i
+                            class="fa-solid fa-right-from-bracket nav-icon"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <!-- Header Part -->
+        <header class="identify_header">
+            <div id="ip2">
+                <h2 class="ds">Identification</h2>
+            </div>
+            <div class="user_profile">
+                <h4>Data Pioneer</h4>
+                <img class="user_icon"
+                    src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt=""
+                    srcset="">
+            </div>
+        </header>
+
+        <!-- Wrap container -->
+        <div class="wrap_container">
+            <!-- Raw material Name Enter -->
+            <div class="s_bar">
+                <h3>Enter the Name of the Raw Material:</h3>
+                <input type="text" name="search-bar" id="manu-identify" placeholder="Enter The Plant Name" required>
+                <div class="buttons">
+                    <div class="file-upload">
+                        <button type="submit" id="capture">Capture</button>
+                        <button type="submit" id="submit">Submit</button>
+                        <button type="submit" id="clear">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="choose_supplier">
+                <!-- Supplier name display -->
+                <h3>Choose the Supplier:</h3>
+                <select name="supplier" id="supplier">
+                    <option value="Supplier0" selected disabled hidden>Select Supplier</option>
+                    <option value="Supplier1">Durga S</option>
+                    <option value="Supplier2">Arun Kumar T</option>
+                    <option value="Supplier3">Hariharaan S</option>
+                    <option value="Supplier4">Dharsha S R</option>
+                    <option value="Supplier5">Jaya Surya L</option>
+                    <option value="Supplier6">Jai Udhaya S</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Verified Lottie-player -->
+        <div id="verified"></div>
+
+        <!-- show input image -->
+        <label for="images" class="drop-container" id="dropcontainer">
+            <span class="drop-title">Drop files here</span>
+            or
+            <input type="file" id="images" multiple accept="image/*" required>
+        </label>
+        <img id="image-preview" class="drop-container" src="#" style="display: none;">
+
+        <!-- Output message -->
+        <div id="predict_output" class="predict_output"></div>
+
+        <!-- Report view -->
+        <button type="submit" class="view_report" id="view_report">View Report</button>
+
+        <!--Vertical Bar-->
+        <div class="outer">
+            <div class="inner"></div>
+        </div>
+
+        <!--Loader-->
+        <div id="loading"><lottie-player src="https://lottie.host/aec192c9-7f46-44da-9d43-e7015ab6822c/hKq5wjyPJV.json"
+                background="transparent" speed="1" style="width: 500px; height: 500px;" loop autoplay></lottie-player>
+        </div>
+
+        <!--Prediction Output-->
+        <div class="output" style="display: none;">
+            <div class="details">
+                <h3>Name :</h3>
+                <p class="pg" id="name"></p>
+                <h3>Species :</h3>
+                <p class="pg" id="species"></p>
+                <div class="im">
+                    <img id="predict_img" src="" alt="" width="200px" height="200px" style="border-radius: 25px;">
+                </div>
+                <h3>Decsription :</h3>
+                <p class="pg" id="description"></p>
+                <h3>Habitat :</h3>
+                <p class="pg" id="habitat"></p>
+            </div>
+        </div>
+        <!-- scroll reveal -->
+        <script src="https://unpkg.com/scrollreveal"></script>
+
+        <!-- swiper js -->
+        <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+        <!-- ------------- -->
+        <script src="{{url_for('static',filename='js/index.js')}}"></script>
+</body>
+
+</html>

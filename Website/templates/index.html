@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/styles.css')}}">
+</head>
+<body>
+    <script src="https://kit.fontawesome.com/c1b3701aff.js" crossorigin="anonymous"></script>
+    <div class="side-nav">
+        <div class="side-nav-wrap">
+            <div class="logo">
+                <img src="{{url_for('static',filename='logo.png')}}" width="200px" height="200px" alt="" srcset="">
+            </div>
+            <ul>
+                <li>
+                    <a href="{{url_for('identify')}}" ><i class="fa-regular fa-id-card nav-icon"></i>Identification</a>
+                </li>
+                <li>
+                    <a href="{{url_for('home')}}" class="active"><i class="fa-solid fa-file-invoice nav-icon"></i>Report</a>
+                </li>
+                <li>
+                    <a href="{{url_for('search')}}"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
+                </li>
+                <li>
+                    <a href="{{url_for('history')}}"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
+                </li>
+                <li>
+                    <a href="{{url_for('login')}}" class="logout"><i class="fa-solid fa-right-from-bracket nav-icon"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <header>
+            <h2 class="ds">Dashboard</h2>
+            <div class="user_profile">
+                <h4>Data Pioneer</h4>
+                <img class="user_icon" src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt="" srcset="">
+            </div>
+        </header>
+        <h3 class="rs">Recent Search</h3>
+        <div class="container">
+            <div class="wrap">
+                <div class="item">
+                    <p class="item-head">Aloevera</p>
+                    <img  width="230" height="200" src="{{url_for('static',filename='Alovera.jpg')}}" alt="" srcset="">
+                </div>
+                <div class="item">
+                    <p class="item-head">Hibiscus</p>
+                    <img  width="230" height="200" src="{{url_for('static',filename='hibiscus.jpg')}}" alt="" srcset="">
+                </div>
+                <div class="item">
+                    <p class="item-head">Tulsi</p>
+                    <img  width="230" height="200" src="{{url_for('static',filename='tulsi.jpg')}}" alt="" srcset="">
+                </div>
+                <div class="item">
+                    <p class="item-head">Curry</p>
+                    <img  width="230" height="200" src="{{url_for('static',filename='curry.jpg')}}" alt="" srcset="">
+                </div>
+            </div>
+        </div>
+        <div class="graph">
+            <h3>Statistics</h3>
+            <!-- iframe for Power BI -->
+            <iframe class="report_powerbi" title="report" width="1240" height="571.25" src="https://app.powerbi.com/reportEmbed?reportId=7d4a0834-9938-4ce4-bc39-827f56181971&autoAuth=true&ctid=02286583-175c-458f-98e0-234d4b040175" frameborder="0" allowFullScreen="true"></iframe>
+        </div>
+    </div>
+    
+</body>
+</html>
