@@ -21,7 +21,9 @@ h1 {
 	margin: 0;
 }
 
-h2 {
+h2, .header {
+	position: relative;
+	margin-top: 6%;
 	text-align: center;
 }
 

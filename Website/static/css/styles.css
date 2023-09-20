@@ -97,7 +97,8 @@ header{
 }
 .user_profile h4{
     position: absolute;
-    left: 20%;
+    left: 10%;
+    right: 10%;
     top: -27%;
 }
 
@@ -125,6 +126,7 @@ header h2{
 .container .wrap .item{
     background-color: #30d166;
     position: relative;
+    right: 50px;
     border-radius: 20px;
     transition: all ease 0.5s;
 }

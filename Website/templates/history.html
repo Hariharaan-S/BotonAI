@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{url_for('static',filename='css/identification.css')}}">
 </head>
+
 <body>
     <script src="https://kit.fontawesome.com/c1b3701aff.js" crossorigin="anonymous"></script>
     <div class="side-nav">
@@ -18,7 +20,7 @@
             </div>
             <ul>
                 <li>
-                    <a href="{{url_for('identify')}}" ><i class="fa-regular fa-id-card nav-icon"></i>Identification</a>
+                    <a href="{{url_for('identify')}}"><i class="fa-regular fa-id-card nav-icon"></i>Identification</a>
                 </li>
                 <li>
                     <a href="{{url_for('home')}}"><i class="fa-solid fa-file-invoice nav-icon"></i>Report</a>
@@ -27,25 +29,29 @@
                     <a href="{{url_for('search')}}"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
                 </li>
                 <li>
-                    <a href="{{url_for('history')}}" class="active"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
+                    <a href="{{url_for('history')}}" class="active"><i
+                            class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
                 </li>
                 <li>
-                    <a href="{{url_for('login')}}" class="logout"><i class="fa-solid fa-right-from-bracket nav-icon"></i>Logout</a>
+                    <a href="{{url_for('login')}}" class="logout"><i
+                            class="fa-solid fa-right-from-bracket nav-icon"></i>Logout</a>
                 </li>
             </ul>
         </div>
     </div>
     <div class="container-fluid">
-        <header>
+        <header class="search_header">
             <input type="text" name="search-bar" id="ip2" placeholder="Enter The Plant Name " required>
             <div class="user_profile">
-                <h4>Data Pioneer</h4>
-                <img class="user_icon" src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt="" srcset="">
+                <h4>{{username}}</h4>
+                <img class="user_icon"
+                    src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt=""
+                    srcset="">
             </div>
         </header>
     </div>
-    
-    <table id="customers">
+
+    <table id="customers" class="customers">
         <tr>
             <th>
                 Plant Name
@@ -103,5 +109,21 @@
             </td>
         </tr>
     </table>
+
+    <!-- scroll reveal -->
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+    <!-- swiper js -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="{{url_for('static',filename='js/index.js')}}"></script>
+    <script>
+        //scroll animation
+        ScrollReveal({ distance: '80px', duration: 1500, delay: 100 });
+        ScrollReveal().reveal('.side-nav', { origin: 'left' });
+        ScrollReveal().reveal('.logo_img', { origin: 'top', delay: 330 })
+        ScrollReveal().reveal('.search_header , .customers', { origin: 'top' });
+        ScrollReveal().reveal('.drop-container, .predict_output, .view_report, .outer', { origin: 'bottom' });
+    </script>
 </body>
+
 </html>

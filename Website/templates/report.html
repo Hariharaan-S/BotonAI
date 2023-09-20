@@ -19,5 +19,11 @@
         </div>
     </header>
     <div class="report_view">{{ supplier_report | safe }}</div>
+    <button id="goback" type="submit" onclick="go()">Go Back</button>
+    <script>
+        function go(){
+            window.location.href="{{url_for('technician')}}";
+        }
+    </script>
 </body>
 </html>

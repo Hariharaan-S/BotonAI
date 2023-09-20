@@ -18,15 +18,13 @@
     <div class="side-nav">
         <div class="side-nav-wrap">
             <div class="logo">
-                <img src="{{url_for('static',filename='logo.png')}}" width="200px" height="200px" alt="" srcset="">
+                <img class="logo_img" src="{{url_for('static',filename='logo.png')}}" width="200px" height="200px"
+                    alt="" srcset="">
             </div>
             <ul>
                 <li>
-                    <a href="{{url_for('technician')}}" class="active"><i
+                    <a href="{{url_for('identify')}}" class="active"><i
                             class="fa-regular fa-id-card nav-icon"></i>Identification</a>
-                </li>
-                <li>
-                    <a href="{{url_for('home')}}"><i class="fa-solid fa-file-invoice nav-icon"></i>Report</a>
                 </li>
                 <li>
                     <a href="{{url_for('search')}}"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
@@ -35,7 +33,7 @@
                     <a href="{{url_for('history')}}"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
                 </li>
                 <li>
-                    <a href="{{url_for('logout')}}" class="logout"><i
+                    <a href="{{url_for('logout')}}" class="manu-logout"><i
                             class="fa-solid fa-right-from-bracket nav-icon"></i>Logout</a>
                 </li>
             </ul>
@@ -48,14 +46,14 @@
                 <h2 class="ds">Identification</h2>
             </div>
             <div class="user_profile">
-                <h4>Data_Pioneer</h4>
+                <h4>Data Pioneer</h4>
                 <img class="user_icon"
                     src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt=""
                     srcset="">
             </div>
         </header>
 
-        <!-- Raw material Name Enter -->
+        <!-- Wrap container -->
         <div class="wrap_container">
             <!-- Raw material Name Enter -->
             <div class="s_bar">
@@ -63,7 +61,7 @@
                 <input type="text" name="search-bar" id="manu-identify" placeholder="Enter The Plant Name" required>
                 <div class="buttons">
                     <div class="file-upload">
-                        <button type="submit" disabled id="capture_btn">Capture</button>
+                        <button type="submit" id="capture_btn">Capture</button>
                         <button type="submit" id="submit">Submit</button>
                         <button type="submit" id="clear">Clear</button>
                     </div>
@@ -77,17 +75,23 @@
                     <option value="Supplier0" selected disabled hidden>Select Supplier</option>
                     <option value="Supplier1">Supplier 1</option>
                     <option value="Supplier2">Supplier 2</option>
+                    <option value="Supplier3">Supplier 3</option>
+                    <option value="Supplier4">Supplier 4</option>
+                    <option value="Supplier5">Supplier 5</option>
+                    <option value="Supplier6">Supplier 6</option>
                 </select>
             </div>
         </div>
 
-
-
         <!-- Verified Lottie-player -->
         <div id="verified"></div>
 
+        <!-- Capture video frame -->
+        <!-- <h1>Live Video Feed</h1>
+        <img id="video_feed" src="{{ url_for('video_feed') }}" width="640" height="480"> -->
+
         <!-- show input image -->
-        <label for="images" class="drop-container image_con" id="dropcontainer">
+        <label for="images" class="drop-container" id="dropcontainer">
             <span class="drop-title">Drop files here</span>
             or
             <input type="file" id="images" multiple accept="image/*" required>
@@ -95,7 +99,7 @@
         <img id="image-preview" class="drop-container" src="#" style="display: none;">
 
         <!-- Output message -->
-        <div id="predict_output"></div>
+        <div id="predict_output" class="predict_output"></div>
 
         <!-- Report view -->
         <button type="submit" class="view_report" id="view_report">View Report</button>
@@ -131,14 +135,8 @@
 
         <!-- swiper js -->
         <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+        <!-- ------------- -->
         <script src="{{url_for('static',filename='js/manu_index.js')}}"></script>
-        <script>
-            ScrollReveal({ distance: '80px', duration: 1500, delay: 100 });
-            ScrollReveal().reveal('.side-nav', { origin: 'left' });
-            ScrollReveal().reveal('.logo_img', { origin: 'top', delay: 330 })
-            ScrollReveal().reveal('.identify_header , .wrap_container', { origin: 'top' });
-            ScrollReveal().reveal('.image_con, .predict_output, .view_report, .outer', { origin: 'bottom' });
-        </script>
 </body>
 
 </html>

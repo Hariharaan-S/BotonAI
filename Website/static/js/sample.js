@@ -14,27 +14,21 @@ clr.addEventListener("click", function () {
     imagePreview.style.display = "none";
 });
 
-$('#images').on('change', function () {
-    var imageInput = this;
-    var imagePreview = $('#image-preview');
+imageInput.addEventListener("change", function () {
 
     if (imageInput.files && imageInput.files[0]) {
-        var reader = new FileReader();
-
+        const reader = new FileReader();
         reader.onload = function (e) {
-            imagePreview.attr('src', e.target.result);
 
-            imagePreview.css('display', 'block');
-
-            $('#dropcontainer').css('display', 'none');
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = "block";
         };
-
         reader.readAsDataURL(imageInput.files[0]);
     } else {
-        imagePreview.css('display', 'none');
-        $('#dropcontainer').css('display', 'block');
+        imagePreview.style.display = "none";
     }
 });
+
 
 $(document).ready(function () {
     $("#submit").click(function () {
@@ -90,37 +84,6 @@ $(document).ready(function () {
         });
     });
 
-    $("#capture").click(function () {
-        var formData = new FormData();
-        formData.append("image", $("#live_image"));
-        $.ajax({
-            type: "POST",
-            url: "/capture",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                const temp = response.split("$");
-                const t1 = temp[0].split(":");
-                const t2 = temp[1].split(":");
-                const t3 = temp[2].split(":");
-                const t4 = temp[3].split(":");
-                const name = t1[1];
-                const spe = t2[1];
-                const desc = t3[1];
-                const hab = t4[1];
-                $("#name").text(name);
-                $("#species").text(spe);
-                $("#description").text(desc);
-                $("#habitat").text(hab);
-                document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
-            },
-            error: function () {
-                $("#prediction-result").text("Error: Unable to make a prediction.");
-            }
-        });
-
-    });
 
     $("#view_report").on("click", function () {
         $.ajax({
@@ -138,26 +101,25 @@ $(document).ready(function () {
         document.getElementById('image').src = "{{url_for('video_feed')}}?" + new Date().getTime();
     }, 1000);
 
-    function captureAndSend() {
+    // function captureAndSend() {
 
-        const result = fetch('/predict').then(response => response.json()).then(data => {
-            const temp = data.split("$");
-            const t1 = temp[0].split(":");
-            const t2 = temp[1].split(":");
-            const t3 = temp[2].split(":");
-            const t4 = temp[3].split(":");
-            const name = t1[1];
-            const spe = t2[1];
-            const desc = t3[1];
-            const hab = t4[1];
-            $("#name").text(name);
-            $("#species").text(spe);
-            $("#description").text(desc);
-            $("#habitat").text(hab);
-            document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
-        })
-    }
-
+    //     const result = fetch('/predict').then(response => response.json()).then(data => {
+    //         const temp = data.split("$");
+    //         const t1 = temp[0].split(":");
+    //         const t2 = temp[1].split(":");
+    //         const t3 = temp[2].split(":");
+    //         const t4 = temp[3].split(":");
+    //         const name = t1[1];
+    //         const spe = t2[1];
+    //         const desc = t3[1];
+    //         const hab = t4[1];
+    //         $("#name").text(name);
+    //         $("#species").text(spe);
+    //         $("#description").text(desc);
+    //         $("#habitat").text(hab);
+    //         document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
+    //     })
+    // }
 
     // const videoFeed = document.getElementById('video_feed');
     // videoFeed.addEventListener('loadeddata', function () {
@@ -200,8 +162,15 @@ $(document).ready(function () {
     // });
 });
 
-$("#capture").click(function () {
-
+$("#capture_btn").click(function () {
+        // Capture the video frame and send it to the /predict route
+        const videoFeed = document.getElementById('video_feed');
+        const canvas = document.createElement('canvas');
+        canvas.width = 224;
+        canvas.height = 224;
+        const context = canvas.getContext('2d');
+        context.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
+        const imageBase64 = canvas.toDataURL('image/jpeg');
     var formData = new FormData();
     formData.append("image", $("#live_image"));
     $.ajax({
@@ -210,6 +179,9 @@ $("#capture").click(function () {
         data: formData,
         processData: false,
         contentType: false,
+        beforeSend: function(){
+            $('#video_feed').style.display = "none";
+        },
         success: function (response) {
             const temp = response.split("$");
             const t1 = temp[0].split(":");
@@ -232,3 +204,10 @@ $("#capture").click(function () {
     });
 
 });
+
+//scroll animation
+ScrollReveal({ distance: '80px', duration: 1500, delay: 100 });
+ScrollReveal().reveal('.side-nav', { origin: 'left' });
+ScrollReveal().reveal('.logo_img', { origin: 'top', delay: 330 })
+ScrollReveal().reveal('.identify_header , .wrap_container', { origin: 'top' });
+ScrollReveal().reveal('.drop-container, .predict_output, .view_report, .outer', { origin: 'bottom' });

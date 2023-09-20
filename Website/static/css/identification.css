@@ -85,9 +85,10 @@ header {
   right: 3%;
 }
 
-.user_profile h4 {
+.user_profile h4{
   position: absolute;
-  left: 20%;
+  left: 10%;
+  right: 10%;
   top: -27%;
 }
 
@@ -488,4 +489,9 @@ button[type=submit]:hover {
 .report_view{
   position: relative;
   margin: 2% 13%;
+}
+
+#goback{
+  position: relative;
+  margin-left: 25px;
 }

@@ -7,7 +7,7 @@ clr.addEventListener("click", function () {
     imageInput.value = "";
     document.querySelector(".output").style.display = "none";
     dropcontainerElement.style.display = "flex";
-    document.getElementById("identify").value = "";
+    document.getElementById("manu-identify").value = "";
     document.getElementById("verified").innerHTML = "";
     document.getElementById("predict_output").innerHTML = "";
     document.getElementById("predict_img").src = "";
@@ -39,7 +39,7 @@ $('#images').on('change', function () {
 $(document).ready(function () {
     $("#submit").click(function () {
         var formData = new FormData();
-        var raw = document.getElementById("identify");
+        var raw = document.getElementById("manu-identify");
         const raw_material_name = raw.value;
         var verify = document.getElementById("verified")
         const res = document.getElementById("predict_output");
@@ -134,9 +134,9 @@ $(document).ready(function () {
         });
     });
 
-    setInterval(function () {
-        document.getElementById('image').src = "{{url_for('video_feed')}}?" + new Date().getTime();
-    }, 1000);
+    // setInterval(function () {
+    //     document.getElementById('image').src = "{{url_for('video_feed')}}?" + new Date().getTime();
+    // }, 1000);
 
     function captureAndSend() {
 
@@ -157,47 +157,6 @@ $(document).ready(function () {
             document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
         })
     }
-
-
-    // const videoFeed = document.getElementById('video_feed');
-    // videoFeed.addEventListener('loadeddata', function () {
-    //     // Capture the video frame and send it to the /predict route
-    //     const canvas = document.createElement('canvas');
-    //     canvas.width = 224;
-    //     canvas.height = 224;
-    //     const context = canvas.getContext('2d');
-    //     context.drawImage(videoFeed, 0, 0, canvas.width, canvas.height);
-    //     const imageBase64 = canvas.toDataURL('image/jpeg'); // Convert to base64
-
-    //     const formData = new FormData();
-    //     formData.append('image', imageBase64);
-    //     // Send the captured frame to the Flask route
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: '/capture',
-    //         processData: false,
-    //         data:  imageBase64, // Set this to false to prevent jQuery from processing the data
-    //         success: function (response) {
-    //             const temp = response.split("$");
-    //             const t1 = temp[0].split(":");
-    //             const t2 = temp[1].split(":");
-    //             const t3 = temp[2].split(":");
-    //             const t4 = temp[3].split(":");
-    //             const name = t1[1];
-    //             const spe = t2[1];
-    //             const desc = t3[1];
-    //             const hab = t4[1];
-    //             $("#name").text(name);
-    //             $("#species").text(spe);
-    //             $("#description").text(desc);
-    //             $("#habitat").text(hab);
-    //             document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
-    //         },
-    //         error: function (error) {
-    //             console.error('Error:', error);
-    //         }
-    //     });
-    // });
 });
 
 $("#capture").click(function () {
@@ -232,3 +191,5 @@ $("#capture").click(function () {
     });
 
 });
+
+//scroll animation

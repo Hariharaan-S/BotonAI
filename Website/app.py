@@ -1,9 +1,16 @@
+import json
 import os
 import cv2
-from flask import Flask, render_template,request, redirect, session
+from flask import Flask, Response, jsonify, render_template,request, redirect, session
 import numpy as np
 import tensorflow as tf
 from classification import classification 
+import base64
+import io
+from PIL import Image
+from flask_mysqldb import MySQL
+import MySQLdb.cursors
+import uuid
 ALLOWED_EXTENSIONS = {'jpg'}
 
 model = tf.keras.models.load_model('D:\\SIH 2023\\Website\\keras_model.h5')
@@ -12,63 +19,184 @@ supplier = {1: '<iframe title="supplier_1" width="1140" height="541.25" src="htt
 
 
 app = Flask(__name__)
+
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'devahari'
+app.config['MYSQL_DB'] = 'BotonAI'
+
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'default_secret_key')
+
+mysql = MySQL(app)
 output_folder = 'captured_frames'
+
+def generate_frames():
+    camera = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+
+    while True:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            frame_filename = os.path.join(output_folder, f"frame.jpg")
+            cv2.imwrite(frame_filename, frame)
+
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpg\r\n\r\n' + frame + b'\r\n')
 
 @app.route('/capture',methods=["POST"])
 def capture():
-    camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    success, frame = camera.read()
+    image = None
+    image_base64 = request.data
+    print("image_base64:", {image_base64}) # Read the raw request data as bytes
 
-    frame_filename = os.path.join(output_folder, f"frame.jpg")
-    cv2.imwrite(frame_filename, frame)
-
-    ret, buffer = cv2.imencode('.jpg', frame)
-    img_array = np.frombuffer(frame, np.uint8)
-    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
-
-    resized_image = cv2.resize(img, (224, 224))
+    if b',' in image_base64:
+        base64_data = image_base64.split(b',')[1]
+        image_data = base64.b64decode(base64_data)
+        image = Image.open(io.BytesIO(image_data))
+    else:
+        base64_data = None 
     c = classification('D:\\SIH 2023\\Website\\keras_model.h5','D:\\SIH 2023\\Website\\labels.txt')
-    prediction = c.classify_image(resized_image) 
-    return prediction
+    prediction = c.classify_image(image) 
 
-@app.route('/login')
+    # Return the prediction as JSON
+    return jsonify({'prediction': prediction})
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+        fullname = request.form['name']
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        phoneno = request.form['phone']
+        unique_user_id = str(uuid.uuid4())
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('INSERT INTO users (id, full_name, username, email, phone_number, password) VALUES (%s, %s, %s, %s, %s, %s)',
+                       (unique_user_id, fullname, username, email, phoneno, password))
+        mysql.connection.commit()
+
+        log_login_history(unique_user_id, 'Registered')
+
+        session['loggedin'] = True
+        session['user_id'] = unique_user_id  
+        session['username'] = username
+        return redirect('/')
+    elif request.method == 'POST':
+        msg = 'Please fill out the form !'
+    return render_template('login.html', msg=msg)
+
+def log_login_history(user_id, login_status):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('INSERT INTO user_login_history (user_id, login_status) VALUES (%s, %s)',
+                   (user_id, login_status))
+    mysql.connection.commit()
+    cursor.close()
+
+def log_login_history_update(user_id, plant_name,login_status):
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('INSERT INTO history (user_id, plant_name, status) VALUES (%s, %s, %s)',
+                   (user_id, plant_name, login_status))
+    mysql.connection.commit()
+    cursor.close()
+
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    return redirect('/')
+
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT id, password FROM users WHERE username = %s', (username,))
+        user_data = cursor.fetchone()
+        cursor.close()
 
+        if user_data and user_data['password'] == password:
+            session['loggedin'] = True
+            session['user_id'] = user_data['id']
+            session['username'] = username
+            msg = 'Logged in successfully !'
+            log_login_history(user_data['id'], 'Login Successful')
+            
+            return redirect("/")
+        else:
+            msg = 'Incorrect username or password !'
+            log_login_history(user_data['id'], 'Login Failed')
+
+    return render_template('login.html', msg=msg)
 @app.route('/')
 def h():
-    return render_template('identification.html')
+    if 'username' in session:
+        return render_template('identification.html',username = session['username'])
+    else:
+        return render_template('login.html')
 
 @app.route('/home')
 def home():
-    return render_template("index.html")
+    if 'username' in session:
+        return render_template('index.html',username = session['username'])
+    else:
+        return render_template('login.html')
 
 @app.route("/identify")
 def identify():
-    return render_template("identification.html")
+    if 'username' in session:
+        return render_template('identification.html',username = session['username'])
+    else:
+        return render_template('login.html')
 
 @app.route("/predict",methods=['GET','POST'])
 def predict():
-
-    image_input = request.files['image']
+    image_input = request.files["image"]
     if image_input:
-        
         img_bytes = image_input.read()
         img_array = np.frombuffer(img_bytes, np.uint8)
         img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
-    resized_image = cv2.resize(img, (224, 224))
-    c = classification('D:\\SIH 2023\\Website\\keras_model.h5','D:\\SIH 2023\\Website\\labels.txt')
-    prediction = c.classify_image(resized_image)   
-    return prediction
+        resized_image = cv2.resize(img, (224, 224))
+        c = classification('D:\\SIH 2023\\Website\\keras_model.h5','D:\\SIH 2023\\Website\\labels.txt')
+        prediction = c.classify_image(resized_image)   
+        # log_login_history_update(session['user_id'], plant_name,"Verified" if str(prediction.split("$")[0]).split(":")[1].strip() == plant_name else "Not Verified")
+        return prediction
+    else:
+        im = request.json['image']
+        img_array = np.frombuffer(img_bytes, np.uint8)
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+
+        resized_image = cv2.resize(img, (224, 224))
+        c = classification('D:\\SIH 2023\\Website\\keras_model.h5','D:\\SIH 2023\\Website\\labels.txt')
+        prediction = c.classify_image(resized_image)   
+        return prediction
 
 @app.route('/search')
 def search():
-    return render_template('search.html')
+    if 'username' in session:
+        return render_template('search.html',username = session['username'])
+    else:
+        return render_template('login.html')
 
 @app.route('/history')
 def history():
-    return render_template('history.html')
+    if 'username' in session:
+        return render_template('history.html',username = session['username'])
+    else:
+        return render_template('login.html')
 
 @app.route('/technician')
 def technician():
@@ -78,6 +206,7 @@ def technician():
 def report():
     s = request.json['sup_id']
     return render_template("report.html",supplier_report=supplier.get(int(s)))
+
 
 if __name__ == "__main__":
     app.run(debug=True)
