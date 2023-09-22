@@ -12,13 +12,13 @@
             <h2 class="ds">Report</h2>
         </div>
         <div class="report_user_profile">
-            <h4>Data Pioneer</h4>
+            <h4>{{username}}</h4>
             <img class="user_icon"
                 src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt=""
                 srcset="">
         </div>
     </header>
-    <div class="report_view">{{ supplier_report | safe }}</div>
+    <div class="report_view">{{ supplier_report['iframe'] | safe }}</div>
     <button id="goback" type="submit" onclick="go()">Go Back</button>
     <script>
         function go(){

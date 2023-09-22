@@ -26,13 +26,13 @@
                             class="fa-regular fa-id-card nav-icon"></i>Identification</a>
                 </li>
                 <li>
-                    <a href="{{url_for('home')}}"><i class="fa-solid fa-file-invoice nav-icon"></i>Report</a>
+                    <a href="{{url_for('mindex')}}"><i class="fa-solid fa-file-invoice nav-icon"></i>Report</a>
                 </li>
                 <li>
-                    <a href="{{url_for('search')}}"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
+                    <a href="{{url_for('msearch')}}"><i class="fa-solid fa-magnifying-glass nav-icon"></i>Search</a>
                 </li>
                 <li>
-                    <a href="{{url_for('history')}}"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
+                    <a href="{{url_for('mhistory')}}"><i class="fa-solid fa-clock-rotate-left nav-icon"></i>History</a>
                 </li>
                 <li>
                     <a href="{{url_for('logout')}}" class="logout"><i
@@ -48,7 +48,7 @@
                 <h2 class="ds">Identification</h2>
             </div>
             <div class="user_profile">
-                <h4>Data_Pioneer</h4>
+                <h4>{{username}}</h4>
                 <img class="user_icon"
                     src="{{url_for('static',filename='White And Black Modern Abstract Beauty Logo.png')}}" alt=""
                     srcset="">
@@ -61,10 +61,12 @@
             <div class="s_bar">
                 <h3>Enter the Name of the Raw Material:</h3>
                 <input type="text" name="search-bar" id="manu-identify" placeholder="Enter The Plant Name" required>
-                <div class="buttons">
-                    <div class="file-upload">
-                        <button type="submit" disabled id="capture_btn">Capture</button>
+                <div class="buttons" >
+                    <div class="file-upload" style="display: flex; flex-direction: row;">
+                        <button type="submit" id="toggle">Toggle</button>
+                        <button type="submit" id="capture" class="capture-cam">Capture</button>
                         <button type="submit" id="submit">Submit</button>
+                        <button type="submit" id="send">Send</button>
                         <button type="submit" id="clear">Clear</button>
                     </div>
                 </div>
@@ -74,9 +76,10 @@
                 <!-- Supplier name display -->
                 <h3>Choose the Supplier:</h3>
                 <select name="supplier" id="supplier">
-                    <option value="Supplier0" selected disabled hidden>Select Supplier</option>
-                    <option value="Supplier1">Supplier 1</option>
-                    <option value="Supplier2">Supplier 2</option>
+                    <option value="Supplier" selected disabled hidden>Select Supplier</option>
+                    {% for item in data %}
+                    <option value="{{item['username']}}">{{ item['username'] }}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>
@@ -93,6 +96,9 @@
             <input type="file" id="images" multiple accept="image/*" required>
         </label>
         <img id="image-preview" class="drop-container" src="#" style="display: none;">
+        <div id="camera"></div>
+        <div id="capture_out" class="cp"></div>
+        
 
         <!-- Output message -->
         <div id="predict_output"></div>
@@ -118,7 +124,7 @@
                 <h3>Species :</h3>
                 <p class="pg" id="species"></p>
                 <div class="im">
-                    <img id="predict_img" src="" alt="" width="200px" height="200px" style="border-radius: 25px;">
+                    <img id="predict_img" src="" alt="" width="200px" height="200px" style="border-radius: 20px;">
                 </div>
                 <h3>Decsription :</h3>
                 <p class="pg" id="description"></p>
@@ -130,6 +136,7 @@
         <script src="https://unpkg.com/scrollreveal"></script>
 
         <!-- swiper js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js" integrity="sha512-dQIiHSl2hr3NWKKLycPndtpbh5iaHLo6MwrXm7F0FM5e+kL2U16oE9uIwPHUl6fQBeCthiEuV/rzP3MiAB8Vfw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
         <script src="{{url_for('static',filename='js/manu_index.js')}}"></script>
         <script>
@@ -137,7 +144,7 @@
             ScrollReveal().reveal('.side-nav', { origin: 'left' });
             ScrollReveal().reveal('.logo_img', { origin: 'top', delay: 330 })
             ScrollReveal().reveal('.identify_header , .wrap_container', { origin: 'top' });
-            ScrollReveal().reveal('.image_con, .predict_output, .view_report, .outer', { origin: 'bottom' });
+            ScrollReveal().reveal('.image_con, .predict_output, .outer', { origin: 'bottom' });
         </script>
 </body>
 

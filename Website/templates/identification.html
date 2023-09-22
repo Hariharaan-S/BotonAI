@@ -59,10 +59,12 @@
         <div class="wrap-container">
             <h3>Enter the Name of the Raw Material:</h3>
             <input type="text" name="search-bar" id="identify" placeholder="Enter The Plant Name" required>
-            <div class="buttons">
-                <div class="file-upload">
-                    <button type="submit" id="capture">Capture</button>
+            <div class="buttons" >
+                <div class="file-upload" style="display: flex; flex-direction: row;">
+                    <button type="submit" id="toggle">Toggle</button>
+                    <button type="submit" id="capture" class="capture-cam">Capture</button>
                     <button type="submit" id="submit">Submit</button>
+                    <button type="submit" id="send">Send</button>
                     <button type="submit" id="clear">Clear</button>
                 </div>
             </div>
@@ -78,6 +80,9 @@
             <input type="file" id="images" multiple accept="image/*" required>
         </label>
         <img id="image-preview" class="drop-container" src="#" style="display: none;">
+        <div id="camera"></div>
+        <div id="capture_out" class="cp"></div>
+        
 
         <!-- Output message -->
         <div id="predict_output"></div>
@@ -100,7 +105,7 @@
                 <h3>Species :</h3>
                 <p class="pg" id="species"></p>
                 <div class="im">
-                    <img id="predict_img" src="" alt="" width="200px" height="200px" style="border-radius: 25px;">
+                    <img id="predict_img" src="" alt="" width="200px" height="200px" style="border-radius: 20px;">
                 </div>
                 <h3>Decsription :</h3>
                 <p class="pg" id="description"></p>
@@ -113,6 +118,7 @@
 
         <!-- swiper js -->
         <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js" integrity="sha512-dQIiHSl2hr3NWKKLycPndtpbh5iaHLo6MwrXm7F0FM5e+kL2U16oE9uIwPHUl6fQBeCthiEuV/rzP3MiAB8Vfw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="{{url_for('static',filename='js/index.js')}}"></script>
         <script>
             ScrollReveal({ distance: '80px', duration: 1500, delay: 100 });

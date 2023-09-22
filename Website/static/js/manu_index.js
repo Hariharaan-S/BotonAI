@@ -2,6 +2,7 @@ const imageInput = document.getElementById("images");
 const imagePreview = document.getElementById("image-preview");
 const dropcontainerElement = document.getElementById("dropcontainer");
 const clr = document.getElementById("clear");
+var cap=false;
 
 clr.addEventListener("click", function () {
     imageInput.value = "";
@@ -37,17 +38,23 @@ $('#images').on('change', function () {
 });
 
 $(document).ready(function () {
+    document.getElementById("camera").style.display = "none";
+    document.getElementById("send").style.display = "none";
+    document.getElementById("capture_out").style.display = "none";
+    document.getElementById("capture").style.display = "none";
     $("#submit").click(function () {
+
         var formData = new FormData();
         var raw = document.getElementById("manu-identify");
-        const raw_material_name = raw.value;
+        const raw_material_name = raw.value.toLowerCase();
         var verify = document.getElementById("verified")
         const res = document.getElementById("predict_output");
         formData.append("image", $("#images")[0].files[0]);
+        var url = "/predict?raw_material_name=" + encodeURIComponent(raw_material_name);
 
         $.ajax({
             type: "POST",
-            url: "/predict",
+            url: url,
             contentType: false,
             data: formData,
             processData: false,
@@ -62,11 +69,12 @@ $(document).ready(function () {
                 const t2 = temp[1].split(":");
                 const t3 = temp[2].split(":");
                 const t4 = temp[3].split(":");
-                const name = t1[1];
+                const name = t1[1].trim().toLowerCase();
                 const spe = t2[1];
                 const desc = t3[1];
                 const hab = t4[1];
-                if (name.trim() === raw_material_name) {
+                const f1 = raw_material_name.split(/[\s-]/);
+                if ((name.includes(raw_material_name) || f1[0] === name.split("-")[0] || f1[1] === name.split("-")[1] || name.startsWith(raw_material_name) || f1[1] && name.split("-")[1].startsWith(f1[1]))) {
                     $("#name").text(name);
                     $("#species").text(spe);
                     $("#description").text(desc);
@@ -90,44 +98,68 @@ $(document).ready(function () {
         });
     });
 
+
+    $("#toggle").click(function () {
+        $("#camera").toggle();
+        if ($("#camera").is(":visible")) {
+            document.getElementById("capture_out").style.display = "none";
+            $("#buttons").css("display", "flex");
+            $("#send").css("display", "block");
+            $("#dropcontainer").css("display", "none");
+            $("#capture").css("display", "flex");
+            $("#submit").css("display", "none");
+
+        } else {
+            $("#send").css("display", "none");
+            $("#dropcontainer").css("display", "flex");
+            $("#submit").css("display", "block");
+            $("#send").css("display", "none");
+            $("#capture").css("display", "none");
+            document.getElementById("capture_out").style.display = "none";
+        }
+    });
+    $("#clear").click(function () {
+        if (!cap) {
+            document.getElementById("capture_out").style.display = "none";
+            $("#buttons").css("display", "flex");
+            $("#send").css("display", "block");
+            $("#dropcontainer").css("display", "none");
+            $("#capture").css("display", "flex");
+            $("#submit").css("display", "none");
+            $("#camera").show();
+            cap = true;
+
+        } else {
+            $("#send").css("display", "none");
+            $("#dropcontainer").css("display", "flex");
+            $("#submit").css("display", "block");
+            $("#send").css("display", "none");
+            $("#capture").css("display", "none");
+            document.getElementById("capture_out").style.display = "none";
+        }
+
+    });
+
+
     $("#capture").click(function () {
-        var formData = new FormData();
-        formData.append("image", $("#live_image"));
-        $.ajax({
-            type: "POST",
-            url: "/capture",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                const temp = response.split("$");
-                const t1 = temp[0].split(":");
-                const t2 = temp[1].split(":");
-                const t3 = temp[2].split(":");
-                const t4 = temp[3].split(":");
-                const name = t1[1];
-                const spe = t2[1];
-                const desc = t3[1];
-                const hab = t4[1];
-                $("#name").text(name);
-                $("#species").text(spe);
-                $("#description").text(desc);
-                $("#habitat").text(hab);
-                document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
-            },
-            error: function () {
-                $("#prediction-result").text("Error: Unable to make a prediction.");
-            }
-        });
+        cap = false;
+        $("#camera").hide();
+        document.getElementById("capture_out").style.display = "flex";
+        Webcam.snap(function (data_uri) {
+            document.getElementById("capture_out").innerHTML = '<img id="capture_image" src="' + data_uri + '"/>';
+        })
+        document.getElementById("#capture_out").classList.add("cp");
 
     });
 
     $("#view_report").on("click", function () {
+        var username = document.getElementById("supplier").value;
+        console.log(username);
         $.ajax({
             type: "POST",
             url: "/report",
             contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify({ 'sup_id': "2" }),
+            data: JSON.stringify({ 'sup_id': username }),
             success: function (response) {
                 $("body").html(response);
             }
@@ -191,5 +223,11 @@ $("#capture").click(function () {
     });
 
 });
-
+Webcam.set({
+    width: 400,
+    height: 300,
+    image_format: 'jpeg',
+    jpeg_quality: 100
+});
+Webcam.attach("#camera");
 //scroll animation
