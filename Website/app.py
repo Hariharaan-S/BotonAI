@@ -63,7 +63,31 @@ def capture():
     if image is not None and image.any():
         c = classification('D:\\SIH 2023\\Website\\keras_model.h5','D:\\SIH 2023\\Website\\labels.txt')
         prediction = c.classify_image(image)
-        return jsonify({'prediction': prediction})
+        if prediction == None:
+            plant_name=request.args.get('raw_material_name')
+            e_plant=re.sub(r'[^a-zA-Z]','',plant_name).lower()
+            e_plant=plant_name.capitalize()
+            Status="Not Verified"
+            log_login_history_update(session['user_id'],e_plant,"Incorrect" ,Status)
+            return jsonify({'prediction': prediction})
+        
+        elif prediction != None:
+            plant_name=request.args.get('raw_material_name')
+            e_plant=re.sub(r'[^a-zA-Z]','',plant_name).lower()
+            p_plant=str(prediction.split("$")[0]).split(":")[1].strip()
+            predicted=re.sub(r'[^a-zA-Z]','',p_plant).lower()
+            Status=""
+            p_species=str(prediction.split("$")[1]).split(":")[1].strip()
+            if e_plant in predicted:
+                Status="Verified"
+                e_plant=plant_name.capitalize()
+            else:
+                e_plant=plant_name.capitalize()
+                Status="Not Verified"
+            log_login_history_update(session['user_id'],p_plant,p_species ,Status)
+            return jsonify({'prediction': prediction})
+        else:
+            return jsonify({'prediction': prediction})
     else:
         return jsonify({'error': 'Invalid image data'}), 400
 
@@ -246,7 +270,7 @@ def supplier_report():
         cursor.execute("SELECT iframe from user_report WHERE user_id=(%s)",(result,))
         ifm=cursor.fetchone()
         print(ifm)
-    return render_template('report.html',supplier_report=ifm)
+    return render_template('report.html',supplier_report=ifm,username=session['username'])
 
 @app.route('/mindex')
 def mindex():

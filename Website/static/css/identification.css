@@ -121,7 +121,12 @@ header h2 {
   position: relative;
 }
 
+.container .wrap .item:hover{
+  transform: scale(1.05);
+  cursor: pointer;
+  box-shadow: 10px 10px 80px 0px rgba(63, 39, 102, 0.10);
 
+}
 
 .container .wrap .item .item-head {
   position: absolute;
