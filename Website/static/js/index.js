@@ -1,7 +1,7 @@
 const imageInput = document.getElementById("images");
 const imagePreview = document.getElementById("image-preview");
 const dropcontainerElement = document.getElementById("dropcontainer");
-var cap=false;
+var cap = false;
 
 $('#images').on('change', function () {
     var imageInput = this;
@@ -35,7 +35,7 @@ $(document).ready(function () {
         var formData = new FormData();
         var raw = document.getElementById("identify");
         const raw_material_name = raw.value.toLowerCase();
-        if (raw_material_name != null) {
+        if (raw_material_name !== "") {
             var verify = document.getElementById("verified")
             const res = document.getElementById("predict_output");
             formData.append("image", $("#images")[0].files[0]);
@@ -86,6 +86,9 @@ $(document).ready(function () {
                 }
             });
         }
+        else {
+            alert("Enter the raw material name!");
+        }
     });
     $("#toggle").click(function () {
         $("#camera").toggle();
@@ -115,18 +118,22 @@ $(document).ready(function () {
             $("#capture").css("display", "flex");
             $("#submit").css("display", "none");
             $("#camera").show();
+            $("#verified").text("");
+            $("#predict_output").text("");
+            $("#identify").text("");
             cap = false;
 
         } else {
             $("#send").css("display", "none");
             $("#dropcontainer").css("display", "flex");
             $("#submit").css("display", "block");
-            $("#send").css("display", "none");
             $("#capture").css("display", "none");
-            document.getElementById("capture_out").style.display = "none";
+            $("#capture_out").css("display", "none");
             $("#camera").hide();
+            $("#verified").text("");
+            $("#predict_output").text("");
+            $("#identify").text("");
         }
-
     });
 
 
@@ -153,10 +160,6 @@ $(document).ready(function () {
         });
     });
 
-    // setInterval(function () {
-    //     document.getElementById('image').src = "{{url_for('video_feed')}}?" + new Date().getTime();
-    // }, 1000);
-
     function captureAndSend() {
 
         const result = fetch('/predict').then(response => response.json()).then(data => {
@@ -182,42 +185,52 @@ $(document).ready(function () {
         var formData = new FormData();
         var raw = document.getElementById("identify");
         const raw_material_name = raw.value.toLowerCase();
-        var verify = document.getElementById("verified")
-        const res = document.getElementById("predict_output");
-        var send_image = document.getElementById("capture_image").src;
-        formData.append("image", send_image);
-        var url = "/capture?raw_material_name=" + encodeURIComponent(raw_material_name);
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                console.log(response);
-                if (response.prediction !== null) {
-                    const temp = response.prediction.split("$");
-                    const t1 = temp[0].split(":");
-                    const t2 = temp[1].split(":");
-                    const t3 = temp[2].split(":");
-                    const t4 = temp[3].split(":");
-                    const name = t1[1].trim().toLowerCase();
-                    const nm = name.replace(/[^a-zA-Z]/g, '');
-                    const rw = raw_material_name.replace(/[^a-zA-Z]/g, '');
-                    const spe = t2[1];
-                    const desc = t3[1];
-                    const hab = t4[1];
+        if (raw_material_name !== "") {
+            var verify = document.getElementById("verified")
+            const res = document.getElementById("predict_output");
+            var send_image = document.getElementById("capture_image").src;
+            formData.append("image", send_image);
+            var url = "/capture?raw_material_name=" + encodeURIComponent(raw_material_name);
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    $('#loading').css("visibility", "visible");
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response.prediction !== null) {
+                        const temp = response.prediction.split("$");
+                        const t1 = temp[0].split(":");
+                        const t2 = temp[1].split(":");
+                        const t3 = temp[2].split(":");
+                        const t4 = temp[3].split(":");
+                        const name = t1[1].trim().toLowerCase();
+                        const nm = name.replace(/[^a-zA-Z]/g, '');
+                        const rw = raw_material_name.replace(/[^a-zA-Z]/g, '');
+                        const spe = t2[1];
+                        const desc = t3[1];
+                        const hab = t4[1];
 
-                    if (raw_material_name != null) {
-                        if (nm.includes(rw)) {
-                            document.querySelector(".output").style.display = "block";
-                            $("#name").text(name);
-                            $("#species").text(spe);
-                            $("#description").text(desc);
-                            $("#habitat").text(hab);
-                            document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
-                            res.innerHTML = "Identified as " + raw_material_name;
-                            verify.innerHTML = '<lottie-player class="verify_icon" src="https://lottie.host/712cc0d7-0319-445b-80b7-ed662a3d4db3/9idUOQtExU.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>';
+                        if (raw_material_name != null) {
+                            if (nm.includes(rw)) {
+                                document.querySelector(".output").style.display = "block";
+                                $("#name").text(name);
+                                $("#species").text(spe);
+                                $("#description").text(desc);
+                                $("#habitat").text(hab);
+                                document.getElementById("predict_img").src = "static\\predict_image\\" + name.trim() + ".jpg";
+                                res.innerHTML = "Identified as " + raw_material_name;
+                                verify.innerHTML = '<lottie-player class="verify_icon" src="https://lottie.host/712cc0d7-0319-445b-80b7-ed662a3d4db3/9idUOQtExU.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>';
+                            }
+                            else {
+                                verify.innerHTML = '<lottie-player class="verify_icon" src="https://lottie.host/fdfcdf78-8b44-4d5c-a6ed-0daaedc20483/3HUQ76oYY8.json" background="transparent" speed="1" style="width: 250px; height: 250px; margin-top: 20px; margin-left: 15px;" loop autoplay></lottie-player>';
+                                res.innerHTML = "Fake Raw Material or Wrong Raw Material";
+                                document.querySelector(".output").style.display = "none";
+                            }
                         }
                         else {
                             verify.innerHTML = '<lottie-player class="verify_icon" src="https://lottie.host/fdfcdf78-8b44-4d5c-a6ed-0daaedc20483/3HUQ76oYY8.json" background="transparent" speed="1" style="width: 250px; height: 250px; margin-top: 20px; margin-left: 15px;" loop autoplay></lottie-player>';
@@ -230,17 +243,18 @@ $(document).ready(function () {
                         res.innerHTML = "Fake Raw Material or Wrong Raw Material";
                         document.querySelector(".output").style.display = "none";
                     }
+                },
+                complete: function () {
+                    $('#loading').css("visibility", "hidden")
+                },
+                error: function () {
+                    $("#prediction-result").text("Error: Unable to make a prediction.");
                 }
-                else {
-                    verify.innerHTML = '<lottie-player class="verify_icon" src="https://lottie.host/fdfcdf78-8b44-4d5c-a6ed-0daaedc20483/3HUQ76oYY8.json" background="transparent" speed="1" style="width: 250px; height: 250px; margin-top: 20px; margin-left: 15px;" loop autoplay></lottie-player>';
-                    res.innerHTML = "Fake Raw Material or Wrong Raw Material";
-                    document.querySelector(".output").style.display = "none";
-                }
-            },
-            error: function () {
-                $("#prediction-result").text("Error: Unable to make a prediction.");
-            }
-        });
+            });
+        }
+        else{
+            alert("Enter the raw material name");
+        }
 
     });
 });

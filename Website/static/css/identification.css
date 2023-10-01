@@ -117,8 +117,12 @@ header h2 {
 
 }
 
-.container .wrap .item {
+.container .wrap .item{
+  background-color: #30d166;
   position: relative;
+  right: 50px;
+  border-radius: 20px;
+  transition: all ease 0.5s;
 }
 
 .container .wrap .item:hover{
